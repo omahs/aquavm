@@ -47,11 +47,11 @@ fn folex_bug_999() {
         r#"
         (seq
             (seq
-                (call "relay" ("kad" "neighborhood") ["relay"] neighs_top) ; ok = ["p1"]
+                (call "relay" ("kad" "neighborhood") ["relay"] neighs_top) ; ok = ["p1","p2"]
                 (seq
                     (fold neighs_top n
                         (seq
-                            (call n ("kad" "neighborhood") [n] $neighs_inner) ; ok =["relay","client","p1"]
+                            (call n ("kad" "neighborhood") [n] $neighs_inner) ; ok =["relay","client","p1","p2"]
                             (next n)
                         )
                     )
@@ -74,18 +74,18 @@ fn folex_bug_999() {
             )
         )
         "#,
-        join_stream("external_addresses", "\"relay\"", "1", "joined_addresses"),
+        join_stream("external_addresses", "\"relay\"", "2", "joined_addresses"),
     );
 
     let engine = TestExecutor::new(
         TestRunParameters::from_init_peer_id("client"),
         vec![],
-        vec!["p1"].into_iter().map(Into::into),
+        vec!["p1","p2"].into_iter().map(Into::into),
         &script,
     ).unwrap();
 
     for _ in 0..7 {
-        for peer in ["client", "relay", "p1"] {
+        for peer in ["client", "relay", "p1", "p2"] {
             let it = engine.execution_iter(peer).unwrap();
             for v in it {
                 assert_eq!(v.ret_code, 0, "{:?}", v);
