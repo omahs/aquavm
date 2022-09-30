@@ -134,10 +134,14 @@ impl Stream {
     }
 
     pub(crate) fn get_value_by_pos(&self, position: TracePos) -> Option<&ValueAggregate> {
+        let v = self.values_by_pos.get(&position);
+        if v.is_none() {
+            eprintln!("get_value_by_pos: {}", position);
+        }
         let StreamValueLocation {
             generation,
             position_in_generation,
-        } = self.values_by_pos.get(&position)?;
+        } = v?;
         let value = &self.values[*generation][*position_in_generation];
         Some(value)
     }

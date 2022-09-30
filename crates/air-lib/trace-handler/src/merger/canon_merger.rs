@@ -76,7 +76,11 @@ fn prepare_single_canon_result(
             new_to_other_pos
                 .get_by_right(pos)
                 .cloned()
-                .ok_or_else(|| CanonResultError::not_met_position(canon_result.clone(), *pos))
+                .ok_or_else(|| {
+                    eprintln!("get_by_right not found: {}", pos);
+                    eprintln!("{:?}", new_to_other_pos);
+                    CanonResultError::not_met_position(canon_result.clone(), *pos)
+                })
         })
         .collect::<Result<Vec<_>, _>>()?;
 

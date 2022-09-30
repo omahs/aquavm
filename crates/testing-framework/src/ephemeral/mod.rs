@@ -18,6 +18,7 @@ pub mod neighborhood;
 
 use self::neighborhood::{PeerEnv, PeerSet};
 use crate::services::{services_to_call_service_closure, MarineServiceHandle};
+use air_interpreter_data::InterpreterData;
 
 use air_test_utils::{
     test_runner::{create_avm, TestRunParameters, TestRunner},
@@ -88,9 +89,29 @@ impl Peer {
     ) -> Result<RawAVMOutcome, String> {
         let mut prev_data = vec![];
         std::mem::swap(&mut prev_data, &mut self.prev_data);
+
+        let saved_prev_data = prev_data.clone();
+        let saved_cur_data = data.clone();
+
         let res = self.runner.call(air, prev_data, data, test_run_params);
         if let Ok(outcome) = &res {
             self.prev_data = outcome.data.clone();
+            if outcome.ret_code != 0 {
+                let saved_prev_idata: InterpreterData = serde_json::from_slice(&saved_prev_data).expect("default serializer shouldn't fail");
+                let saved_trace = saved_prev_idata.trace;
+                println!("trace {} (states_count: {}): [", "prev", saved_trace.len());
+                for (id, state) in saved_trace.iter().enumerate() {
+                    println!("  {}: {}", id, state);
+                }
+                println!("]");
+                let cur_prev_idata: InterpreterData = serde_json::from_slice(&saved_cur_data).expect("default serializer shouldn't fail");
+                let cur_trace = cur_prev_idata.trace;
+                println!("trace {} (states_count: {}): [", "prev", cur_trace.len());
+                for (id, state) in cur_trace.iter().enumerate() {
+                    println!("  {}: {}", id, state);
+                }
+                println!("]");
+            }
         }
         res
     }
