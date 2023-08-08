@@ -85,8 +85,8 @@ pub fn json_data_cid<Val: ?Sized>(data: &[u8]) -> CID<Val> {
     use cid::Cid;
     use multihash::{Code, MultihashDigest};
 
-    // the Sha2_256 is current IPFS default hash
-    let digest = Code::Sha2_256.digest(data);
+    // n.b.: current multihash 0.18.1 uses blake2s_simd which is more performant
+    let digest = Code::Blake2s256.digest(data);
     // seems to be better than RAW_CODEC = 0x55
     const JSON_CODEC: u64 = 0x0200;
 
