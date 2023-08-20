@@ -17,7 +17,6 @@
 use air::interpreter_data::ExecutedState;
 use air::ExecutionCidState;
 use air::UncatchableError::*;
-use air_interpreter_cid::CID;
 use air_interpreter_data::ValueRef;
 use air_test_utils::prelude::*;
 
@@ -82,10 +81,11 @@ fn call_result_not_correspond_to_instr() {
 
     let scalar_value = 42;
     let wrong_trace = vec![scalar!(scalar_value)];
+    let cid = extract_service_result_cid(&wrong_trace[0]);
     let data = raw_data_from_trace(wrong_trace, <_>::default());
 
     let result = peer_vm_1.call(script, "", data, <_>::default()).unwrap();
-    let value_ref = ValueRef::Scalar(CID::new("bagaaierax2kxw256denmh2rmtot4cnuvz7wrf6e2l7jnxhtv3qb6xvqj2vhq").into());
+    let value_ref = ValueRef::Scalar(cid);
     let expected_error = CallResultNotCorrespondToInstr(value_ref);
     assert!(check_error(&result, expected_error), "{:?}", result);
 }
@@ -122,10 +122,11 @@ fn value_for_cid_not_found() {
     );
 
     let wrong_trace = vec![scalar!(42)];
+    let cid = extract_service_result_cid(&wrong_trace[0]);
     let data = raw_data_from_trace(wrong_trace, <_>::default());
     let result = peer_vm_1.call(script, "", data, <_>::default()).unwrap();
 
-    let missing_cid = String::from("bagaaierax2kxw256denmh2rmtot4cnuvz7wrf6e2l7jnxhtv3qb6xvqj2vhq");
+    let missing_cid = cid.as_ref().clone().into_inner().to_string();
     let expected_error = ValueForCidNotFound("service result aggregate", missing_cid);
     assert!(check_error(&result, expected_error));
 }
