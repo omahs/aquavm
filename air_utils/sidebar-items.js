@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["auto_checked_add","measure"]};

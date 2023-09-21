@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"air_test_framework":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/borrow/trait.Borrow.html\" title=\"trait core::borrow::Borrow\">Borrow</a>&lt;<a class=\"primitive\" href=\"https://doc.rust-lang.org/nightly/std/primitive.str.html\">str</a>&gt; for <a class=\"struct\" href=\"air_test_framework/ephemeral/struct.PeerId.html\" title=\"struct air_test_framework::ephemeral::PeerId\">PeerId</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
